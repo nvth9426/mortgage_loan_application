@@ -119,6 +119,10 @@ class Address(models.Model):
     CURRENT = "Current", "Current"
     FORMER = "Former", "Former"
 
+  class Meta:
+    verbose_name = "Address"
+    verbose_name_plural = "Addresses"
+
   borrower = models.ForeignKey(Borrower, on_delete=models.CASCADE)
   street_address = models.CharField(max_length=150)
   unit = models.CharField(max_length=100, null=True, blank=True)
@@ -140,7 +144,7 @@ class Employment(models.Model):
   borrower = models.ForeignKey(Borrower, on_delete=models.CASCADE)
   employer_name = models.CharField(max_length=100)
   street_address = models.CharField(max_length=100)
-  unit = models.CharField(max_length=60, null=True)
+  unit = models.CharField(max_length=60, null=True, blank=True)
   city = models.CharField(max_length=100)
   state = models.CharField(max_length=2, choices=State.choices)
   zip_code = models.CharField(max_length=20)
@@ -148,15 +152,15 @@ class Employment(models.Model):
   position = models.CharField(max_length=100)
   employer_type = models.CharField(max_length=20, choices=EmploymentType.choices)
   start_date = models.DateField()
-  end_date = models.DateField()
+  end_date = models.DateField(null=True, blank=True)
   previous_gross_monthly_income = models.FloatField()
   is_owned = models.BooleanField()
   base_pay_per_month = models.FloatField()
-  overtime_pay_per_month = models.FloatField()
-  bonus_per_month = models.FloatField()
-  commission_per_month = models.FloatField()
-  military_entitlements_per_month = models.FloatField()
-  other_pay_per_month = models.FloatField()
+  overtime_pay_per_month = models.FloatField(null=True, blank=True)
+  bonus_per_month = models.FloatField(null=True, blank=True)
+  commission_per_month = models.FloatField(null=True, blank=True)
+  military_entitlements_per_month = models.FloatField(null=True, blank=True)
+  other_pay_per_month = models.FloatField(null=True, blank=True)
 
   
 
@@ -191,8 +195,6 @@ class IncomeSource(models.Model):
   income_source = models.CharField(max_length=100, choices=IncomeSourceCategory.choices)
   monthly_income = models.FloatField()
 
-  
-  
 class AssetAccountType(models.TextChoices):
   CHECKING = "Checking", "Checking"
   SAVINGS = "Savings", "Savings"
@@ -216,8 +218,6 @@ class Asset(models.Model):
   account_number = models.CharField(max_length=100)
   cash_market_value = models.FloatField()
 
-  
-
 class OtherAccessAccountCreditType(models.TextChoices):
   OTHER_ASSET_PROCEEDS_FROM_REAL_ESTATE = "Proceeds from Real Estate Property to be sold on or before closing" 
   OTHER_ASSET_PROCEEDS_FROM_NON_REAL_ESTATE = "Proceeds from Sale of Non-Real Estate Asset"
@@ -237,8 +237,6 @@ class OtherAssetsCreditsAccount(models.Model):
   asset_credit_type = models.CharField(max_length=100, choices=OtherAccessAccountCreditType.choices)
   cash_market_value = models.FloatField()
 
-  
-
 class LiabilityAccounType(models.TextChoices):
   REVOLVING = "Revolving", "Revolving"
   INSTALLMENT = "Installment", "Installment"
@@ -247,6 +245,10 @@ class LiabilityAccounType(models.TextChoices):
   OTHER = "Other", "Other"
 
 class Liability(models.Model):
+  class Meta:
+    verbose_name = "Liability"
+    verbose_name_plural = "Liabilities"
+
   borrower = models.ForeignKey(Borrower, on_delete=models.CASCADE)
   account_type = models.CharField(max_length=100, choices=LiabilityAccounType.choices)
   company_name = models.CharField(max_length=100)
@@ -262,13 +264,20 @@ class OtherLiabilityExpenseType(models.TextChoices):
   JOB_RELATED_EXPENSES = "Job Related Expenses", "Job Related Expenses"
   OTHER = "Other", "Other"
 
-class OtherLiabilityExpenses(models.Model):
+class OtherLiabilityExpense(models.Model):
+  class Meta:
+    verbose_name = "Other Liability Expense"
+    verbose_name_plural = "Other Liability Expenses"
+
   borrower = models.ForeignKey(Borrower, on_delete=models.CASCADE)
   liability_expense_type = models.CharField(max_length=100, choices=OtherLiabilityExpenseType)
   monthly_paymnet = models.FloatField()
 
-
 class RealEstateProperty(models.Model):
+  class Meta:
+    verbose_name = "RealEstateProperty"
+    verbose_name_plural = "Real Estate Properties"
+
   class Status(models.TextChoices):
     SOLD = "Sold", "Sold"
     PENDING_SALE = "Pending Sale", "Pending Sale"
@@ -309,8 +318,10 @@ class RealEstateProperyMortgageLoan(models.Model):
   mortgage_loan_type = models.CharField(max_length=30, choices=MortageType.choices)
   credit_limit = models.FloatField()
 
-
 class LoanPropertyInfo(models.Model):
+  class Meta:
+    verbose_name = "Loan Property Information"
+
   class LoanPurpose(models.TextChoices):
     PURCHASE = "Purchase", "Purchase"
     REFINANCE = "Refinance", "Refinance"
@@ -357,6 +368,7 @@ class GiftGrant(models.Model):
     LENDER = "Lender", "Lender"
     OTHER = "Other", "Other"
 
+  # borrower = models.ForeignKey(Borrower, on_delete=models.CASCADE)
   loan_property_info = models.ForeignKey(LoanPropertyInfo, on_delete=models.CASCADE)
   asset_type = models.CharField(max_length=100, choices=AssetType.choices)
   deposited = models.BooleanField()
